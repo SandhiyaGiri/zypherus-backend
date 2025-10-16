@@ -10,15 +10,5 @@
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
-  },
-  "services": [
-    {
-      "name": "zypherus-backend",
-      "source": ".",
-      "build": {
-        "builder": "DOCKERFILE",
-        "dockerfilePath": "Dockerfile.backend"
-      }
-    }
-  ]
+  }
 }

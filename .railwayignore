@@ -1,14 +1,19 @@
-# Ignore individual service package.json files to prevent multiple deployments
-apps/dev-server/package.json
-apps/stt-worker/package.json
-apps/llm-service/package.json
+# Prevent Railway from auto-detecting individual services
+# by ignoring package.json files in subdirectories
+apps/*/package.json
+packages/*/package.json
 
-# Ignore individual service directories for auto-detection
-apps/dev-server/
-apps/stt-worker/
-apps/llm-service/
+# Ignore development files
+node_modules/
+.git/
+*.log
+.env*
 
-# Keep only the root package.json and Dockerfile
+# Keep all source code and configuration files
+!apps/
+!packages/
 !package.json
-!Dockerfile.backend
-!railway.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+!turbo.json
