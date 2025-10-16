@@ -1,8 +1,11 @@
 {
-  "name": "zypherus",
+  "name": "zypherus-backend",
+  "version": "1.0.0",
+  "description": "Zypherus Backend Services - Single Docker Deployment",
   "private": true,
   "packageManager": "pnpm@10.17.1",
   "scripts": {
+    "start": "./start-stack.sh",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
