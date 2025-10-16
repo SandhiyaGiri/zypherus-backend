@@ -1,0 +1,53 @@
+# syntax=docker/dockerfile:1.6
+
+ARG NODE_VERSION=20
+
+FROM node:${NODE_VERSION}-bullseye-slim AS builder
+
+WORKDIR /workspace
+
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable pnpm
+
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+COPY apps ./apps
+COPY packages ./packages
+
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter @zypherus/shared-types build \
+    && pnpm --filter @zypherus/audio-utils build \
+    && pnpm --filter @zypherus/dev-server build \
+    && pnpm --filter @zypherus/stt-worker build \
+    && pnpm --filter @zypherus/llm-service build
+
+RUN mkdir -p deploy/dev-server deploy/stt-worker deploy/llm-service
+
+RUN pnpm deploy --filter @zypherus/dev-server --prod --legacy deploy/dev-server \
+    && pnpm deploy --filter @zypherus/stt-worker --prod --legacy deploy/stt-worker \
+    && pnpm deploy --filter @zypherus/llm-service --prod --legacy deploy/llm-service
+
+FROM node:${NODE_VERSION}-bullseye-slim AS runtime
+
+WORKDIR /opt/zypherus
+
+ENV NODE_ENV=production
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /workspace/deploy/dev-server ./services/dev-server
+COPY --from=builder /workspace/deploy/stt-worker ./services/stt-worker
+COPY --from=builder /workspace/deploy/llm-service ./services/llm-service
+
+COPY docker/start-stack.sh ./start-stack.sh
+
+RUN chmod +x ./start-stack.sh
+
+EXPOSE 4000 4300
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["./start-stack.sh"]

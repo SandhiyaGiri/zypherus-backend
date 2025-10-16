@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@zypherus/shared-types": ["packages/shared-types/src/index.ts"],
+      "@zypherus/audio-utils": ["packages/audio-utils/src/index.ts"],
+      "@zypherus/prompt-kit": ["packages/prompt-kit/src/index.ts"],
+      "@zypherus/ui": ["packages/ui/src/index.ts"]
+    }
+  }
+}

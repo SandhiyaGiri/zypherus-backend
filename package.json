@@ -1,0 +1,26 @@
+{
+  "name": "zypherus",
+  "private": true,
+  "packageManager": "pnpm@10.17.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "turbo run format",
+    "build:packages": "pnpm --filter @zypherus/shared-types build && pnpm --filter @zypherus/audio-utils build && pnpm --filter @zypherus/sdk build",
+    "pack:shared-types": "pnpm --filter @zypherus/shared-types pack --pack-destination artifacts",
+    "pack:sdk": "pnpm run build:packages && pnpm --filter @zypherus/sdk pack --pack-destination artifacts",
+    "pack:artifacts": "pnpm run pack:shared-types && pnpm run pack:sdk"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.6",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "typescript-eslint": "^8.8.0",
+    "@eslint/js": "^9.12.0",
+    "eslint-plugin-react": "^7.35.2",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0"
+  }
+}
