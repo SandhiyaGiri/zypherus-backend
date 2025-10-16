@@ -30,6 +30,9 @@ GROQ_LLM_MODEL=moonshotai/kimi-k2-instruct
 STT_ROOM_NAME=zypherus-demo
 STT_PARTICIPANT_IDENTITY=stt-worker
 NODE_ENV=production
+
+# SSL Configuration (if you encounter certificate issues)
+NODE_TLS_REJECT_UNAUTHORIZED=0
 ```
 
 ## How to Set Environment Variables in Railway
