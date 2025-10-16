@@ -1,5 +1,11 @@
 # Railway Environment Variables Setup
 
+## ⚠️ Important: Single Service Deployment
+
+Your backend is configured to deploy as a **single service** using Docker. Railway will NOT create separate services for dev-server, stt-worker, and llm-service. All three services run within one container using the `start-stack.sh` script.
+
+## Environment Variables Configuration
+
 Configure these environment variables in your Railway project dashboard:
 
 ## Required Environment Variables
@@ -57,7 +63,23 @@ Railway automatically sets these ports, but you can override if needed:
 
 Your deployed service will be available at:
 - Main API: `https://your-railway-domain.railway.app/health`
-- LLM Service: `https://your-railway-domain.railway.app:4300/health`
+- LLM Service: `https://your-railway-domain.railway.app/health` (same domain, different internal port)
+
+## Deployment Process
+
+1. **Connect Repository**: Link your GitHub repository to Railway
+2. **Select Dockerfile**: Railway will automatically detect `Dockerfile.backend`
+3. **Set Environment Variables**: Add all the variables listed above
+4. **Deploy**: Railway will build and deploy as a single service
+
+## Troubleshooting Multiple Services Issue
+
+If Railway tries to create multiple services:
+1. Delete the current Railway project
+2. Create a new project
+3. Manually select "Deploy from Dockerfile"
+4. Set Dockerfile path to: `Dockerfile.backend`
+5. Ensure `.railwayignore` is present (prevents auto-detection of individual services)
 
 ## Frontend Integration
 
