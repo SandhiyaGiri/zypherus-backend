@@ -7,9 +7,9 @@ if [ -f /opt/zypherus/.env ]; then
   . /opt/zypherus/.env
 fi
 
-# Fix SSL certificate issues in Railway environment
-export NODE_EXTRA_CA_CERTS=""
-export NODE_TLS_REJECT_UNAUTHORIZED="0"
+# Use system CA bundle (installed in Dockerfile) for TLS verification
+unset NODE_TLS_REJECT_UNAUTHORIZED
+unset NODE_EXTRA_CA_CERTS
 
 DEV_SERVER_DIR="/opt/zypherus/services/dev-server"
 STT_WORKER_DIR="/opt/zypherus/services/stt-worker"

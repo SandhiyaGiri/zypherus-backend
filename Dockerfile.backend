@@ -36,7 +36,8 @@ WORKDIR /opt/zypherus
 ENV NODE_ENV=production
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends dumb-init \
+    && apt-get install -y --no-install-recommends dumb-init ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /workspace/deploy/dev-server ./services/dev-server
