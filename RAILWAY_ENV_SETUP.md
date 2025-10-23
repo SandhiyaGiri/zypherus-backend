@@ -25,11 +25,20 @@ GROQ_STT_MODEL=whisper-large-v3-turbo
 GROQ_LLM_MODEL=moonshotai/kimi-k2-instruct
 ```
 
+### Supabase Configuration
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-role-key
+```
+
 ### Service Configuration
 ```
 STT_ROOM_NAME=zypherus-demo
 STT_PARTICIPANT_IDENTITY=stt-worker
 NODE_ENV=production
+DEV_SERVER_PORT=4000
+LLM_SERVICE_PORT=4300
+PORT=4000
 
 # SSL Configuration (if you encounter certificate issues)
 NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -61,6 +70,14 @@ Railway automatically sets these ports, but you can override if needed:
 1. Sign up at [https://console.groq.com](https://console.groq.com)
 2. Create an API key
 3. Use the API key for `GROQ_API_KEY`
+
+### Supabase
+1. Sign up at [https://supabase.com](https://supabase.com)
+2. Create a new project
+3. Go to Settings → API
+4. Copy the `service_role` key (starts with `eyJ...`) for `SUPABASE_SERVICE_KEY`
+5. Copy the project URL for `SUPABASE_URL`
+6. Run the database setup script from `scripts/setup-database.sql` in SQL Editor
 
 ## Health Check
 

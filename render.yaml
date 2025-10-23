@@ -1,0 +1,63 @@
+services:
+  - type: web
+    name: zypherus-backend
+    env: docker
+    dockerfilePath: ./Dockerfile.backend
+    dockerContext: .
+    
+    # Health check configuration
+    healthCheckPath: /health
+    
+    # Environment variables (set these in Render Dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      
+      - key: PORT
+        value: 4000
+      
+      - key: DEV_SERVER_PORT
+        value: 4000
+      
+      - key: LLM_SERVICE_PORT
+        value: 4300
+      
+      - key: STT_ROOM_NAME
+        value: zypherus-demo
+      
+      - key: STT_PARTICIPANT_IDENTITY
+        value: stt-worker
+      
+      # LiveKit Configuration (add as secret in Render Dashboard)
+      - key: LIVEKIT_HOST
+        sync: false
+      
+      - key: LIVEKIT_WS_URL
+        sync: false
+      
+      - key: LIVEKIT_WS_URL_FRONTEND
+        sync: false
+      
+      - key: LIVEKIT_API_KEY
+        sync: false
+      
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      
+      # Groq Configuration (add as secret in Render Dashboard)
+      - key: GROQ_API_KEY
+        sync: false
+      
+      - key: GROQ_STT_MODEL
+        value: whisper-large-v3-turbo
+      
+      - key: GROQ_LLM_MODEL
+        value: moonshotai/kimi-k2-instruct
+      
+      # Supabase Configuration (add as secret in Render Dashboard)
+      - key: SUPABASE_URL
+        sync: false
+      
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+

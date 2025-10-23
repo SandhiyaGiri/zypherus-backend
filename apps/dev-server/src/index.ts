@@ -4,11 +4,20 @@ import { fileURLToPath } from 'node:url';
 
 import { config as loadEnv } from 'dotenv';
 import cors from 'cors';
-import express, { type Express } from 'express';
+import express, { type Express, type Response } from 'express';
 import pino from 'pino';
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 import { z } from 'zod';
 import type { LiveKitJoinPayload } from '@zypherus/shared-types';
+
+// Import middleware
+import { apiKeyAuth, type AuthenticatedRequest } from './middleware/auth.js';
+import { createRateLimiter } from './middleware/rateLimit.js';
+import { errorHandler, asyncHandler } from './middleware/errorHandler.js';
+import { requestLogger } from './middleware/requestLogger.js';
+import { usageLogger } from './middleware/usageLogger.js';
+import portalRoutes from './routes/portal.js';
+import { userAuth } from './middleware/userAuth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,6 +55,8 @@ const envSchema = z.object({
   LIVEKIT_WS_URL_FRONTEND: z.string().url().optional(),
   LIVEKIT_API_KEY: z.string().min(1),
   LIVEKIT_API_SECRET: z.string().min(1),
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_SERVICE_KEY: z.string().min(1),
 });
 
 type Env = z.infer<typeof envSchema>;
@@ -60,8 +71,8 @@ function parseEnv(): Env {
 }
 
 const tokenRequestSchema = z.object({
-  roomName: z.string().min(1),
-  identity: z.string().min(1).optional(),
+  roomName: z.string().min(1).max(100).regex(/^[a-zA-Z0-9-_]+$/),
+  identity: z.string().min(1).max(100).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
   autoCreate: z.boolean().optional(),
 });
@@ -69,16 +80,31 @@ const tokenRequestSchema = z.object({
 export function createDevServer(): { app: Express; env: Env } {
   const env = parseEnv();
   const app = express();
+  
+  // Middleware setup
   app.use(cors());
   app.use(express.json({ limit: '2mb' }));
+  app.use(requestLogger);
+  app.use(usageLogger);
 
   const roomService = new RoomServiceClient(env.LIVEKIT_HOST, env.LIVEKIT_API_KEY, env.LIVEKIT_API_SECRET);
 
   app.get('/health', (_req, res) => {
-    res.json({ status: 'ok' });
+    res.json({
+      status: 'ok',
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+    });
   });
 
-  app.post('/livekit/token', async (req, res) => {
+  // Portal routes
+  // Public: signup/login
+  app.use('/api', portalRoutes);
+  
+  // Rate limiting for authenticated routes
+  const rateLimiter = createRateLimiter();
+  
+  app.post('/livekit/token', apiKeyAuth, rateLimiter, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const parseResult = tokenRequestSchema.safeParse(req.body);
     if (!parseResult.success) {
       res.status(400).json({ error: 'Invalid payload', details: parseResult.error.flatten() });
@@ -112,7 +138,10 @@ export function createDevServer(): { app: Express; env: Env } {
     };
 
     res.json(payload);
-  });
+  }));
+
+  // Error handling middleware (must be last)
+  app.use(errorHandler);
 
   return { app, env };
 }

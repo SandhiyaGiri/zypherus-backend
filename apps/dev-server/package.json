@@ -20,7 +20,8 @@
     "ws": "^8.18.0",
     "@zypherus/shared-types": "workspace:*",
     "livekit-server-sdk": "^2.14.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@supabase/supabase-js": "^2.45.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
