@@ -58,10 +58,21 @@ git push origin feature/production-service-setup-clean
 3. **Connect your GitHub repository**
 4. **Configure settings**:
    - **Name**: `zypherus-backend`
-   - **Environment**: `Docker`
+   - **Environment**: `Docker` (recommended)
    - **Region**: Choose closest to your users
    - **Branch**: `feature/production-service-setup-clean` (or `main`)
    - **Dockerfile Path**: `./Dockerfile.backend`
+
+### Option C: Native Node Deployment (Alternative)
+
+If you prefer native Node.js instead of Docker:
+
+1. **Environment**: `Node`
+2. **Build Command**: `pnpm install && pnpm build`
+3. **Start Command**: `./start-render.sh`
+4. **Root Directory**: Leave blank or set to `backend`
+
+**Note**: Docker deployment (Option A/B) is recommended for better isolation and consistency.
 
 ---
 
