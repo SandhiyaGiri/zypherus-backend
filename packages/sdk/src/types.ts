@@ -62,6 +62,7 @@ export interface DevServerTokenProviderOptions {
   identity?: string;
   autoCreate?: boolean;
   metadata?: Record<string, unknown>;
+  apiKey?: string;
   fetchImpl?: typeof fetch;
 }
 

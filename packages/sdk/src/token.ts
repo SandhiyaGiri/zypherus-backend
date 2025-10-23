@@ -2,7 +2,7 @@ import type { LiveKitJoinPayload } from '@zypherus/shared-types';
 import type { DevServerTokenProviderOptions, TokenProvider, TokenProviderContext } from './types.js';
 
 export function createDevServerTokenProvider(options: DevServerTokenProviderOptions): TokenProvider {
-  const { baseUrl, roomName, identity, autoCreate, metadata, fetchImpl } = options;
+  const { baseUrl, roomName, identity, autoCreate, metadata, apiKey, fetchImpl } = options;
   const endpoint = `${trimTrailingSlash(baseUrl)}/livekit/token`;
   const fetchFn = fetchImpl ?? globalThis.fetch;
 
@@ -15,6 +15,7 @@ export function createDevServerTokenProvider(options: DevServerTokenProviderOpti
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
       },
       body: JSON.stringify({
         roomName,
