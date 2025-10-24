@@ -31,6 +31,15 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 ```
 
+### CORS Configuration (Optional)
+```
+# Allow all origins (default for public SDK service)
+# Leave CORS_ORIGINS unset to allow all domains
+
+# OR restrict to specific domains (comma-separated)
+CORS_ORIGINS=https://myapp.com,https://another-app.com,http://localhost:3000
+```
+
 ### Service Configuration
 ```
 STT_ROOM_NAME=zypherus-demo

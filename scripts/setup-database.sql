@@ -39,6 +39,19 @@ CREATE TABLE IF NOT EXISTS usage_logs (
   ip_address TEXT NOT NULL
 );
 
+-- SDK Downloads table
+CREATE TABLE IF NOT EXISTS sdk_downloads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  api_key_id UUID NOT NULL REFERENCES api_keys(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  sdk_version TEXT NOT NULL,
+  package_name TEXT NOT NULL DEFAULT 'sdk',
+  download_url TEXT NOT NULL,
+  ip_address TEXT,
+  user_agent TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_api_keys_key ON api_keys(key);
 CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
@@ -46,11 +59,16 @@ CREATE INDEX IF NOT EXISTS idx_api_keys_is_active ON api_keys(is_active);
 CREATE INDEX IF NOT EXISTS idx_usage_logs_timestamp ON usage_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_usage_logs_user_id ON usage_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_usage_logs_api_key_id ON usage_logs(api_key_id);
+CREATE INDEX IF NOT EXISTS idx_sdk_downloads_user_id ON sdk_downloads(user_id);
+CREATE INDEX IF NOT EXISTS idx_sdk_downloads_api_key_id ON sdk_downloads(api_key_id);
+CREATE INDEX IF NOT EXISTS idx_sdk_downloads_created_at ON sdk_downloads(created_at);
+CREATE INDEX IF NOT EXISTS idx_sdk_downloads_version ON sdk_downloads(sdk_version);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE usage_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sdk_downloads ENABLE ROW LEVEL SECURITY;
 
 -- Users policies
 CREATE POLICY "Users can view own profile" ON users
@@ -114,6 +132,21 @@ CREATE POLICY "Admins can view all logs" ON usage_logs
   );
 
 CREATE POLICY "Service role can insert logs" ON usage_logs
+  FOR INSERT WITH CHECK (true);
+
+-- SDK Downloads policies
+CREATE POLICY "Users can view own SDK downloads" ON sdk_downloads
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Admins can view all SDK downloads" ON sdk_downloads
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE id = auth.uid() AND is_admin = TRUE
+    )
+  );
+
+CREATE POLICY "Service role can insert SDK downloads" ON sdk_downloads
   FOR INSERT WITH CHECK (true);
 
 -- Create function to automatically create user profile on signup

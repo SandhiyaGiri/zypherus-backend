@@ -17,6 +17,7 @@ import { errorHandler, asyncHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { usageLogger } from './middleware/usageLogger.js';
 import portalRoutes from './routes/portal.js';
+import sdkRoutes from './routes/sdk.js';
 import { userAuth } from './middleware/userAuth.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +58,7 @@ const envSchema = z.object({
   LIVEKIT_API_SECRET: z.string().min(1),
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_KEY: z.string().min(1),
+  CORS_ORIGINS: z.string().optional(),
 });
 
 type Env = z.infer<typeof envSchema>;
@@ -82,7 +84,23 @@ export function createDevServer(): { app: Express; env: Env } {
   const app = express();
   
   // Middleware setup
-  app.use(cors());
+  // For production SDK service, allow all origins for client flexibility
+  // Clients can use your SDK from any domain
+  // 
+  // Security Note: If you need to restrict origins for security reasons,
+  // set CORS_ORIGINS environment variable with comma-separated allowed domains
+  // Example: CORS_ORIGINS=https://myapp.com,https://another-app.com
+  const corsOrigins = env.CORS_ORIGINS 
+    ? env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+    : true; // Allow all origins for public SDK service
+
+  app.use(cors({
+    origin: corsOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  }));
   app.use(express.json({ limit: '2mb' }));
   app.use(requestLogger);
   app.use(usageLogger);
@@ -97,9 +115,17 @@ export function createDevServer(): { app: Express; env: Env } {
     });
   });
 
+  // Handle preflight requests
+  app.options('*', (_req, res) => {
+    res.status(200).end();
+  });
+
   // Portal routes
   // Public: signup/login
   app.use('/api', portalRoutes);
+  
+  // SDK download routes
+  app.use('/api/sdk', sdkRoutes);
   
   // Rate limiting for authenticated routes
   const rateLimiter = createRateLimiter();
