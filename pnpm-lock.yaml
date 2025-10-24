@@ -1165,7 +1165,7 @@ packages:
     resolution: {integrity: sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ==}
 
   '@zypherus/shared-types@file:packages/sdk/zypherus-shared-types-0.0.0.tgz':
-    resolution: {integrity: sha512-fbaENxYhdocfXMS12ee8Ppj6GtR5S5gl3lA2AoSMh0EAXHMzNMEm+ODINXRsEDXkThGdnvnsV24n6K9T6hw3UA==, tarball: file:packages/sdk/zypherus-shared-types-0.0.0.tgz}
+    resolution: {integrity: sha512-8mXhd8fclX3DkRtS+rHxG9ylqKJ2jmFLF5R0lQEyUsMJm5QPuo/bnz2/bXdGes6DF19xNhKonTSr/iB1czSm3w==, tarball: file:packages/sdk/zypherus-shared-types-0.0.0.tgz}
     version: 0.0.0
 
   abort-controller@3.0.0:

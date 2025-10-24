@@ -3,20 +3,19 @@ import { apiKeyAuth, AuthenticatedRequest } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { supabase } from '../lib/supabase.js';
 
-const router = Router();
+const router: Router = Router();
 
 // GitHub Release configuration
-// TODO: Update these with your actual GitHub repository details
 const GITHUB_OWNER = process.env.GITHUB_OWNER || 'SandhiyaGiri';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'zypherus-backend';
 
-// SDK version configuration
+// SDK version configuration - Updated automatically by upload script
 const SDK_RELEASES = {
   latest: 'v0.0.1',
   versions: {
     'v0.0.1': {
-      sdk: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v0.0.1/zypherus-sdk-0.0.0.tgz`,
-      sharedTypes: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v0.0.1/zypherus-shared-types-0.0.0.tgz`,
+      sdk: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v0.0.1/zypherus-sdk-v0.0.1.tgz`,
+      sharedTypes: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v0.0.1/zypherus-shared-types-v0.0.1.tgz`,
     },
   },
 };
