@@ -17,6 +17,7 @@ import { errorHandler, asyncHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { usageLogger } from './middleware/usageLogger.js';
 import portalRoutes from './routes/portal.js';
+import sdkRoutes from './routes/sdk.js';
 import { userAuth } from './middleware/userAuth.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -100,6 +101,9 @@ export function createDevServer(): { app: Express; env: Env } {
   // Portal routes
   // Public: signup/login
   app.use('/api', portalRoutes);
+  
+  // SDK download routes
+  app.use('/api/sdk', sdkRoutes);
   
   // Rate limiting for authenticated routes
   const rateLimiter = createRateLimiter();
