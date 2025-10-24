@@ -5,6 +5,9 @@ node_modules/
 # Build outputs
 dist/
 build/
+
+# Turbo cache
+.turbo/
 *.tsbuildinfo
 
 # Environment files
